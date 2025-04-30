@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>안전체험교육 만족도 조사</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f1f1f1;
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    #currentDate {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #555;
+      text-align: center;
+    }
+
+    #completionMessage {
+      color: green;
+      font-size: 1.1rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    #sessionButtons {
+      margin-bottom: 20px;
+    }
+
+    .session-btn, .stat-btn {
+      padding: 14px 24px;
+      margin: 5px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .session-btn { background-color: #009688; color: white; }
+    .stat-btn { background-color: #666; color: white; }
+
+    #surveyForm {
+      display: none;
+      width: 95vw;
+      max-width: 700px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    th, td {
+      padding: 16px 10px;
+      text-align: center;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color: #f8f8f8;
+      color: #333;
+    }
+
+    td.question {
+      text-align: left;
+      font-weight: bold;
+      color: #222;
+      width: 60%;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn-container .btn {
+      width: 48%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.1s ease;
+    }
+
+    .green { background-color: #4CAF50; color: white; }
+    .yellow { background-color: #FFEB3B; color: black; }
+    .red { background-color: #F44336; color: white; }
+    .blue { background-color: #2196F3; color: white; }
+
+    .btn:hover,
+    .btn.selected {
+      outline: 3px solid #000;
+      transform: scale(1.05);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 20px;
+      font-size: 1.3rem;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    #passwordPrompt {
+      margin-top: 10px;
+    }
+
+    #statisticsSection {
+      display: none;
+    }
+
+    .note {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .note-small {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .stat-table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+    }
+
+    .stat-table th, .stat-table td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>안전체험교육 만족도 조사</h1>
+  <div class="note-small" style="text-align: center;">(중, 고등학생 및 가족체험용)</div>
+  <div id="currentDate"></div>
+  <div class="note">
+    * 기타 의견이 있는 사람은 포스트잇에 적어서 선생님께 제출해주세요.<br>
+    (예, 스트레스 해소방이 있으면 좋을 것 같아요 등)
+  </div>
+
+  <div id="completionMessage">응답이 완료되었습니다.</div>
+
+  <div id="sessionButtons">
+    <button class="session-btn" onclick="startSurvey('오전')">오전체험 설문</button>
+    <button class="session-btn" onclick="startSurvey('오후')">오후체험 설문</button>
+  </div>
+
+  <div id="surveyForm">
+    <form id="survey">
+      <table>
+        <tr>
+          <th>질문</th>
+          <th>응답</th>
+        </tr>
+
+        <tr data-question="참여도">
+          <td class="question">① 나는 체험에 적극적으로 참여했다.</td>
+          <td class="btn-container">
+            <button type="button" class="btn green" onclick="selectAnswer(this, '참여도', '그렇다')">O</button>
+            <button type="button" class="btn yellow" onclick="selectAnswer(this, '참여도', '보통')">△</button>
+            <button type="button" class="btn red" onclick="selectAnswer(this, '참여도', '아니다')">X</button>
+          </td>
+        </tr>
+
+        <tr data-question="안전의식도">
+          <td class="question">② 나는 안전교육이 중요하다고 생각한다.</td>
+          <td class="btn-container">
+            <button type="button" class="btn green" onclick="selectAnswer(this, '안전의식도', '그렇다')">O</button>
+            <button type="button" class="btn yellow" onclick="selectAnswer(this, '안전의식도', '보통')">△</button>
+            <button type="button" class="btn red" onclick="selectAnswer(this, '안전의식도', '아니다')">X</button>
+          </td>
+        </tr>
+
+ <tr data-question="수업이해도">
+  <td class="question" style="font-size: 1.00rem;">③ 나는 위험상황을 판단하고 안전하게 행동할 수 있다.</td>
+  <td class="btn-container">
+    <button type="button" class="btn green" onclick="selectAnswer(this, '수업이해도', '그렇다')">O</button>
+    <button type="button" class="btn yellow" onclick="selectAnswer(this, '수업이해도', '보통')">△</button>
+    <button type="button" class="btn red" onclick="selectAnswer(this, '수업이해도', '아니다')">X</button>
+  </td>
+</tr>
+
+
+
+        <tr data-question="시설만족도">
+          <td class="question">④ 체험 시설이 쾌적하고 이용하기 편리했다.</td>
+          <td class="btn-container">
+            <button type="button" class="btn green" onclick="selectAnswer(this, '시설만족도', '그렇다')">O</button>
+            <button type="button" class="btn yellow" onclick="selectAnswer(this, '시설만족도', '보통')">△</button>
+            <button type="button" class="btn red" onclick="selectAnswer(this, '시설만족도', '아니다')">X</button>
+          </td>
+        </tr>
+
+        <tr data-question="추천의사">
+          <td class="question">⑤ 나는 친구들에게 이 교육을 추천하고 싶다.</td>
+          <td class="btn-container">
+            <button type="button" class="btn green" onclick="selectAnswer(this, '추천의사', '그렇다')">O</button>
+            <button type="button" class="btn yellow" onclick="selectAnswer(this, '추천의사', '보통')">△</button>
+            <button type="button" class="btn red" onclick="selectAnswer(this, '추천의사', '아니다')">X</button>
+          </td>
+        </tr>
+      </table>
+
+      <table>
+        <tr data-question="체험선호도">
+  <td class="question">⑥ 오늘 체험한 것 중 가장 좋았던 것은?</td>
+  <td class="btn-container" style="flex-wrap: wrap; row-gap: 12px;">
+    <button type="button" class="btn blue" onclick="selectSingle(this, '체험선호도', '산행체험')">산행체험</button>
+    <button type="button" class="btn blue" onclick="selectSingle(this, '체험선호도', '완강기체험')">완강기체험</button>
+    <button type="button" class="btn blue" onclick="selectSingle(this, '체험선호도', '응급체험')">응급체험</button>
+    <button type="button" class="btn blue" onclick="selectSingle(this, '체험선호도', '자동차체험')">자동차체험</button>
+  </td>
+</tr>
+
+      </table>
+
+      <div id="submitDiv">
+        <button class="submit-btn" type="button" onclick="submitSurvey()">제출하기</button>
+        </div>
+
+    </form>
+  </div>
+
+ 
+ <script>
+
+  let surveyData = {
+    "참여도": "",
+    "안전의식도": "",
+    "수업이해도": "",
+    "시설만족도": "",
+    "추천의사": "",
+    "체험선호도": ""
+  };
+
+let lastResponse = null; // 직전 응답 저장
+
+const selectAnswer = (btn, question, answer) => {
+  surveyData[question] = answer;
+  btn.classList.add("selected");
+  [...btn.parentElement.children].forEach((sibling) => {
+    if (sibling !== btn) sibling.classList.remove("selected");
+  });
+
+  // 마지막 응답 저장
+  lastResponse = { question, button: btn };
+};
+
+const selectSingle = (btn, question, answer) => {
+  surveyData[question] = answer;
+  btn.classList.add("selected");
+  [...btn.parentElement.children].forEach((sibling) => {
+    if (sibling !== btn) sibling.classList.remove("selected");
+  });
+
+  // 마지막 응답 저장
+  lastResponse = { question, button: btn };
+};
+
+const cancelLastResponse = () => {
+  if (!lastResponse) {
+    alert("취소할 응답이 없습니다.");
+    return;
+  }
+
+  const { question, button } = lastResponse;
+  surveyData[question] = "";
+
+  // 버튼 선택 해제
+  button.classList.remove("selected");
+
+  // 같은 그룹 내 다른 버튼들도 선택 해제
+  [...button.parentElement.children].forEach((sibling) => {
+    sibling.classList.remove("selected");
+  });
+
+  // 🔄 Google Sheets로 응답 취소 내용 전송
+  const cancelData = {
+    mode: "cancel", // <-- 취소용 구분자
+    session: currentSession,
+    날짜: new Date().toLocaleString('ko-KR'),
+    취소항목: question
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbzoslBgtFbwe9JhxY1Q7mXm2P_0mrhuMqhVylKXjGgV5u_Ir2exPOVmpTNwgW9_mf3t3A/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(cancelData)
+ }).
+then(response => response.json())
+    .then(data => {
+        console.log("응답 취소 성공:", data);
+  })
+  .catch(err => {
+    console.error("응답 취소 전송 실패:", err);
+  });
+
+  lastResponse = null;
+};
+
+  let currentSession = "";
+
+  const updateCurrentDate = () => {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', hour: 'numeric', minute: 'numeric' };
+    document.getElementById('currentDate').innerText = now.toLocaleDateString('ko-KR', options);
+  };
+
+  const startSurvey = (session) => {
+    currentSession = session;
+    document.getElementById('surveyForm').style.display = 'block';
+    document.getElementById('sessionButtons').style.display = 'none';
+    updateCurrentDate();
+  };
+
+ 
+ const submitSurvey = () => {
+  let allAnswered = Object.values(surveyData).every(answer => answer !== "");
+  if (!allAnswered) {
+    alert("모든 문항에 답변을 해 주세요.");
+    return;
+  }
+
+  // ✅ 완료 메시지 표시
+  document.getElementById('completionMessage').style.display = 'block';
+
+  // ✅ 전송할 데이터 백업
+  const postData = {
+    mode: "submit",
+    session: currentSession,
+    날짜: new Date().toLocaleString('ko-KR'),
+    참여도: surveyData["참여도"],
+    안전의식도: surveyData["안전의식도"],
+    수업이해도: surveyData["수업이해도"],
+    시설만족도: surveyData["시설만족도"],
+    추천의사: surveyData["추천의사"],
+    체험선호도: surveyData["체험선호도"]
+  };
+
+  // ✅ Google Sheets로 전송 (비동기 - 기다리지 않고 실행)
+  fetch("https://script.google.com/macros/s/AKfycbzoslBgtFbwe9JhxY1Q7mXm2P_0mrhuMqhVylKXjGgV5u_Ir2exPOVmpTNwgW9_mf3t3A/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain"
+    },
+    body: JSON.stringify(postData)
+  }).catch(err => {
+    console.error("응답 전송 실패:", err);
+  });
+
+  // ✅ 버튼 즉시 초기화
+  document.querySelectorAll('.btn.selected').forEach(button => {
+    button.classList.remove('selected');
+  });
+
+  document.querySelectorAll('.survey-question .option-button').forEach(button => {
+    button.disabled = false;
+    button.classList.remove('selected');
+  });
+
+  // ✅ 데이터 초기화
+  surveyData = {
+    "참여도": "",
+    "안전의식도": "",
+    "수업이해도": "",
+    "시설만족도": "",
+    "추천의사": "",
+    "체험선호도": ""
+  };
+};
+
+
+</script>
+
+</body>
+</html>
