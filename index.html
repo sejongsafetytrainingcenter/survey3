@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -261,8 +262,6 @@
     "체험선호도": ""
   };
 
-let lastResponse = null; // 직전 응답 저장
-
 const selectAnswer = (btn, question, answer) => {
   surveyData[question] = answer;
   btn.classList.add("selected");
@@ -283,49 +282,6 @@ const selectSingle = (btn, question, answer) => {
 
   // 마지막 응답 저장
   lastResponse = { question, button: btn };
-};
-
-const cancelLastResponse = () => {
-  if (!lastResponse) {
-    alert("취소할 응답이 없습니다.");
-    return;
-  }
-
-  const { question, button } = lastResponse;
-  surveyData[question] = "";
-
-  // 버튼 선택 해제
-  button.classList.remove("selected");
-
-  // 같은 그룹 내 다른 버튼들도 선택 해제
-  [...button.parentElement.children].forEach((sibling) => {
-    sibling.classList.remove("selected");
-  });
-
-  // 🔄 Google Sheets로 응답 취소 내용 전송
-  const cancelData = {
-    mode: "cancel", // <-- 취소용 구분자
-    session: currentSession,
-    날짜: new Date().toLocaleString('ko-KR'),
-    취소항목: question
-  };
-
-  fetch("https://script.google.com/macros/s/AKfycbzoslBgtFbwe9JhxY1Q7mXm2P_0mrhuMqhVylKXjGgV5u_Ir2exPOVmpTNwgW9_mf3t3A/exec", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(cancelData)
- }).
-then(response => response.json())
-    .then(data => {
-        console.log("응답 취소 성공:", data);
-  })
-  .catch(err => {
-    console.error("응답 취소 전송 실패:", err);
-  });
-
-  lastResponse = null;
 };
 
   let currentSession = "";
@@ -397,6 +353,12 @@ then(response => response.json())
     "추천의사": "",
     "체험선호도": ""
   };
+
+  // ✅ 1초 뒤에 완료 메시지 숨기기
+  setTimeout(() => {
+    document.getElementById('completionMessage').style.display = 'none';
+  }, 1000); // 1초 후
+
 };
 
 
